@@ -1,0 +1,38 @@
+server:
+  port: 10000
+
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: bondify
+    version: 0.0.1
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: 'jdbc:h2:mem:test'
+
+  jpa:
+    hibernate:
+      ddl-auto: create
