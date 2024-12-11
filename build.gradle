@@ -36,6 +36,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'io.viascom.nanoid:nanoid:1.0.1'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.765'
 
     runtimeOnly 'com.h2database:h2'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
