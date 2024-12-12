@@ -1,4 +1,4 @@
-package com.tendaysonly.bondify.cqrs
+package com.tendaysonly.ringly.cqrs
 
 import java.lang.annotation.Inherited
 

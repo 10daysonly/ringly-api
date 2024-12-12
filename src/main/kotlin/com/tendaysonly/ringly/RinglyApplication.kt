@@ -1,11 +1,11 @@
-package com.tendaysonly.bondify
+package com.tendaysonly.ringly
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class BondifyApplication
+class RinglyApplication
 
 fun main(args: Array<String>) {
-	runApplication<BondifyApplication>(*args)
+    runApplication<RinglyApplication>(*args)
 }

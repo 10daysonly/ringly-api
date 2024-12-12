@@ -1,4 +1,4 @@
-package com.tendaysonly.bondify.cqrs
+package com.tendaysonly.ringly.cqrs
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

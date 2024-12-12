@@ -1,4 +1,4 @@
-package com.tendaysonly.bondify.cqrs
+package com.tendaysonly.ringly.cqrs
 
 import jakarta.annotation.PostConstruct
 import org.springframework.aop.support.AopUtils
@@ -10,9 +10,9 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.kotlinFunction
 
 @Component
-class SpringQueryBus(
+class SpringCommandBus(
     private val context: ApplicationContext
-) : QueryBus {
+) : CommandBus {
 
     private val handlers = mutableMapOf<Class<*>, HandlerMethod>()
 
@@ -26,7 +26,7 @@ class SpringQueryBus(
                 AopUtils.getTargetClass(bean)
                     .methods
                     .any { method ->
-                        method.isAnnotationPresent(QueryHandler::class.java)
+                        method.isAnnotationPresent(CommandHandler::class.java)
                     }
             }
             .forEach { bean ->
@@ -34,17 +34,17 @@ class SpringQueryBus(
                 AopUtils.getTargetClass(bean)
                     .methods
                     .filter { method ->
-                        method.isAnnotationPresent(QueryHandler::class.java)
+                        method.isAnnotationPresent(CommandHandler::class.java)
                     }
                     .forEach { method ->
-                        method.kotlinFunction?.findAnnotation<QueryHandler>()?.let {
+                        method.kotlinFunction?.findAnnotation<CommandHandler>()?.let {
                             val parameterType = method.parameterTypes
                                 .asList()
                                 .find { type ->
 
                                     Command::class.java.isAssignableFrom(type)
                                 }
-                                ?: throw RuntimeException("@QueryHandler must have a query.")
+                                ?: throw RuntimeException("@CommandHandler must have a command.")
 
                             handlers[parameterType] = HandlerMethod(bean, method)
                         }
@@ -53,11 +53,17 @@ class SpringQueryBus(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <R> execute(query: Query<R>): R {
+    override fun <R> execute(command: Command<R>): R {
 
-        val handler = handlers[query.javaClass]
-            ?: throw IllegalArgumentException("No handler found for ${query.javaClass}")
+        val handler = handlers[command.javaClass]
+            ?: throw IllegalArgumentException("No handler found for ${command.javaClass}")
 
-        return handler.method.invoke(handler.bean, query) as R
+        val result = handler.method.invoke(handler.bean, command)
+
+        return if (result is Unit) {
+            return result as Any as R
+        } else {
+            result as R
+        }
     }
 }

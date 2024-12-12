@@ -1,4 +1,4 @@
-package com.tendaysonly.bondify.config
+package com.tendaysonly.ringly.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
