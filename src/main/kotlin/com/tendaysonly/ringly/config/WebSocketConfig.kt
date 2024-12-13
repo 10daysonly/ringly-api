@@ -3,6 +3,7 @@ package com.tendaysonly.ringly.config
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.tendaysonly.ringly.controller.dto.MessageResponse
 import com.tendaysonly.ringly.cqrs.CommandBus
 import com.tendaysonly.ringly.exception.ErrorResponse
 import com.tendaysonly.ringly.exception.GatheringNotFoundException
@@ -215,7 +216,7 @@ class WebSocketConfig(
                                             Payload(
                                                 type = payload.type,
                                                 data = mapper.convertValue(
-                                                    savedMessage,
+                                                    MessageResponse.from(savedMessage),
                                                     ObjectNode::class.java
                                                 )
                                             )
