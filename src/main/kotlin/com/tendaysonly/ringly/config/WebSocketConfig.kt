@@ -43,7 +43,7 @@ class WebSocketConfig(
                     mapper = mapper,
                     commandBus = commandBus
                 ),
-                "/api/v1/gatherings/*"
+                "/ws/gatherings/*"
             )
             .addInterceptors(
                 ParticipantWebSocketHandshakeHandlerInterceptor(
@@ -92,17 +92,7 @@ class WebSocketConfig(
             return false
         }
 
-        private fun parseGatheringId(path: String): String {
-
-            val pathParts = path.split("/")
-
-            if (pathParts.size < 5) {
-
-                throw IllegalArgumentException("Invalid URL path")
-            }
-
-            return pathParts[4].ifEmpty { throw IllegalArgumentException("Invalid URL path") }
-        }
+        private fun parseGatheringId(path: String): String = path.substringAfterLast("/")
 
         private fun parseToken(query: String?): String {
 
