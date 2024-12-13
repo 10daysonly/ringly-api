@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 왼쪽 장식 요소 */
+    .decoration-left {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 100%;
+      width: 40px;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .decoration-left::before {
+      content: "🎈✨🎉";
+      writing-mode: vertical-rl;
+      position: absolute;
+      left: 5px;
+      bottom: 20px;
+      font-size: 20px;
+      animation: floatLeft 3s infinite ease-in-out;
+    }
+
+    /* 오른쪽 장식 요소 */
+    .decoration-right {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      width: 40px;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .decoration-right::before {
+      content: "🎊✨🎈";
+      writing-mode: vertical-rl;
+      position: absolute;
+      right: 5px;
+      bottom: 20px;
+      font-size: 20px;
+      animation: floatRight 3s infinite ease-in-out;
+    }
+
+    /* 상단 장식 */
+    .decoration-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #674ffe, #f8e463, #674ffe);
+      border-radius: 15px 15px 0 0;
+    }
+
+    /* 하단 장식 */
+    .decoration-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #f8e463, #674ffe, #f8e463);
+      border-radius: 0 0 15px 15px;
+    }
+
+    @keyframes floatLeft {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes floatRight {
+      0%,
+      100% {
+        transform: translateY(-20px);
+      }
+      50% {
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      color: #674ffe;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      margin: 20px 0;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .highlight {
+      background-color: #f8e463;
+      padding: 10px 20px;
+      border-radius: 25px;
+      display: inline-block;
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .button {
+      background-color: #674ffe;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      display: inline-block;
+      margin: 20px 0;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+    }
+
+    .details {
+      border-top: 2px dashed #674ffe;
+      margin-top: 20px;
+      padding-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon {
+      font-size: 36px;
+      margin-bottom: 15px;
+      color: #674ffe;
+    }
+
+    /* 반짝이는 효과 */
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #f8e463;
+      animation: sparkle 1.5s infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes sparkle {
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 0.2;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="decoration-left"></div>
+    <div class="decoration-right"></div>
+    <div class="decoration-top"></div>
+    <div class="decoration-bottom"></div>
+    <!-- 반짝이는 효과 요소들 -->
+    <div class="sparkle" style="top: 20%; left: 10%"></div>
+    <div class="sparkle" style="top: 30%; right: 15%"></div>
+    <div class="sparkle" style="bottom: 25%; left: 20%"></div>
+    <div class="sparkle" style="bottom: 40%; right: 25%"></div>
+
+    <div class="icon">🎉</div>
+    <div class="header">
+      <span th:text="${name}">특별한 모임</span>에 초대합니다!
+    </div>
+    <div class="content">
+      <h2>신나는 파티에 여러분을 초대합니다</h2>
+      <p>즐거운 시간과 특별한 추억을 함께 만들어요!</p>
+      <div th:if="${meetAt}" class="highlight"><span th:text="${meetAt}">12월 31일 오후 8시</span></div>
+    </div>
+
+    <a th:href="${link}" class="button"> 모임으로 이동하기 </a>
+
+    <div class="details">
+      <p th:if="${location != null}">📍 장소: <span th:text="${location}">서울특별시 강남구 ABC빌딩</span></p>
+      <p th:if="${dressCode != null}">👗 드레스코드: <span th:text="${dressCode}">캐주얼</span></p>
+      <p th:if="${additionalInfo != null}">🎁 메세지: <span th:text="${additionalInfo}"></span></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
