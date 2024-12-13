@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.web.method.HandlerMethod
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -58,12 +59,12 @@ class SpringCommandBus(
         val handler = handlers[command.javaClass]
             ?: throw IllegalArgumentException("No handler found for ${command.javaClass}")
 
-        val result = handler.method.invoke(handler.bean, command)
+        try {
 
-        return if (result is Unit) {
-            return result as Any as R
-        } else {
-            result as R
+            return handler.method.invoke(handler.bean, command) as R
+        } catch (e: InvocationTargetException) {
+            
+            throw e.targetException ?: e
         }
     }
 }

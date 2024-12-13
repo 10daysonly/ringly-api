@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.web.method.HandlerMethod
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -58,6 +59,12 @@ class SpringQueryBus(
         val handler = handlers[query.javaClass]
             ?: throw IllegalArgumentException("No handler found for ${query.javaClass}")
 
-        return handler.method.invoke(handler.bean, query) as R
+        try {
+
+            return handler.method.invoke(handler.bean, query) as R
+        } catch (e: InvocationTargetException) {
+
+            throw e.targetException ?: e
+        }
     }
 }
