@@ -36,14 +36,18 @@ jobs:
 
     steps:
       - uses: appleboy/ssh-action@v1.2.0
+        env:
+          HARBOR_REGISTRY: ${{ env.HARBOR_REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
+          envs: HARBOR_REGISTRY,IMAGE_NAME
           script: |
-            docker login ${{ env.HARBOR_REGISTRY }} -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
-            docker pull ${{ env.HARBOR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker login ${HARBOR_REGISTRY} -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+            docker pull ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
             
             docker ps -a | grep ringly-api && docker stop ringly-api || true
             docker ps -a | grep ringly-api && docker rm ringly-api || true
@@ -52,4 +56,4 @@ jobs:
               -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} \
               -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
               -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
-              ${{ env.HARBOR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+              ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
