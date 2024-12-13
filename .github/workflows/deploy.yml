@@ -56,4 +56,4 @@ jobs:
               -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} \
               -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
               -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
-              ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
+               whale.oognuyh.com/10daysonly/ringly-api:latest
