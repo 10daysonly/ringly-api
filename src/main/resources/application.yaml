@@ -6,8 +6,13 @@ spring:
     active: dev
 
   application:
-    name: bondify
+    name: ringly
     version: 0.0.1
+
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 
   mail:
     host: smtp.gmail.com
@@ -21,6 +26,15 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+
+s3:
+  bucket-name: 10daysonly
+  access-key: ${S3_ACCESS_KEY}
+  secret-key: ${S3_SECRET_KEY}
+  region-name: ${S3_REGION_NAME:kr-standard}
+
+token:
+  secret-key: ${TOKEN_SECRET_KEY}
 
 ---
 
