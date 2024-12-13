@@ -71,7 +71,10 @@ class GameController(
                         mapper.writeValueAsString(
                             WebSocketConfig.Payload(
                                 type = WebSocketConfig.Payload.PayloadType.GAME_RESULT,
-                                data = mapper.convertValue(game, ObjectNode::class.java)
+                                data = mapper.convertValue(
+                                    GameResponse.from(game),
+                                    ObjectNode::class.java
+                                )
                             )
                         )
                     )
