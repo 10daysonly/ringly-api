@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.tendaysonly.ringly.cqrs.CommandBus
 import com.tendaysonly.ringly.exception.ErrorResponse
+import com.tendaysonly.ringly.exception.GatheringNotFoundException
 import com.tendaysonly.ringly.security.InvalidTokenException
 import com.tendaysonly.ringly.service.usecase.PostMessageUseCase
 import com.tendaysonly.ringly.util.TokenUtils
@@ -43,7 +44,7 @@ class WebSocketConfig(
                     mapper = mapper,
                     commandBus = commandBus
                 ),
-                "/api/v1/gatherings/*"
+                "/ws/gatherings/*"
             )
             .addInterceptors(
                 ParticipantWebSocketHandshakeHandlerInterceptor(
@@ -92,17 +93,7 @@ class WebSocketConfig(
             return false
         }
 
-        private fun parseGatheringId(path: String): String {
-
-            val pathParts = path.split("/")
-
-            if (pathParts.size < 5) {
-
-                throw IllegalArgumentException("Invalid URL path")
-            }
-
-            return pathParts[4].ifEmpty { throw IllegalArgumentException("Invalid URL path") }
-        }
+        private fun parseGatheringId(path: String): String = path.substringAfterLast("/")
 
         private fun parseToken(query: String?): String {
 
@@ -192,6 +183,9 @@ class WebSocketConfig(
 
         override fun handleMessage(session: WebSocketSession, message: WebSocketMessage<*>) {
 
+            val gatheringId =
+                session.attributes["gatheringId"]?.toString() ?: throw GatheringNotFoundException()
+
             if (message is TextMessage) {
 
                 try {
@@ -200,27 +194,35 @@ class WebSocketConfig(
 
                     if (payload.type == Payload.PayloadType.MESSAGE) {
 
-                        session.sendMessage(
-                            TextMessage(
-                                mapper.writeValueAsString(
-                                    Payload(
-                                        type = payload.type,
-                                        data = mapper.convertValue(
-                                            this.commandBus.execute(
-                                                PostMessageUseCase.PostMessageCommand(
-                                                    gatheringId = session.attributes["gatheringId"].toString(),
-                                                    sender = session.attributes["participant"].toString(),
-                                                    content = payload.data.at("/content")
-                                                        .asText(""),
-                                                    recipient = payload.data.at("/recipient")
-                                                        .asText("all"),
+                        val savedMessage = this.commandBus.execute(
+                            PostMessageUseCase.PostMessageCommand(
+                                gatheringId = session.attributes["gatheringId"].toString(),
+                                sender = session.attributes["participant"].toString(),
+                                content = payload.data.at("/content")
+                                    .asText(""),
+                                recipient = payload.data.at("/recipient")
+                                    .asText("all"),
+                            )
+                        )
+
+                        participantRegistry.getGathering(gatheringId = gatheringId)
+                            .entries
+                            .forEach { entry ->
+
+                                entry.value.sendMessage(
+                                    TextMessage(
+                                        mapper.writeValueAsString(
+                                            Payload(
+                                                type = payload.type,
+                                                data = mapper.convertValue(
+                                                    savedMessage,
+                                                    ObjectNode::class.java
                                                 )
-                                            ), ObjectNode::class.java
+                                            )
                                         )
                                     )
                                 )
-                            )
-                        )
+                            }
                     }
                 } catch (e: IOException) {
 
