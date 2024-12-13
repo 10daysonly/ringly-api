@@ -45,4 +45,10 @@ jobs:
             docker pull ${{ env.HARBOR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             docker stop ringly-api || true
             docker rm ringly-api || true
-            docker run -d --name ringly-api -p 10000:10000 ${{ env.HARBOR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker run -d \
+              --name ringly-api \ 
+              -p 10000:10000 \ 
+              -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} \
+              -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+              -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+              ${{ env.HARBOR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
