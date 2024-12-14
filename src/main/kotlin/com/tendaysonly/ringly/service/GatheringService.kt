@@ -111,7 +111,8 @@ class GatheringService(
     override fun deleteGathering(command: DeleteGatheringUseCase.DeleteGatheringCommand): Gathering {
 
         val gathering =
-            this.repository.findByIdOrNull(command.gatheringId) ?: throw RuntimeException()
+            this.repository.findByIdOrNull(command.gatheringId)
+                ?: throw GatheringNotFoundException()
 
         if (!gathering.isHost(command.email)) {
 
