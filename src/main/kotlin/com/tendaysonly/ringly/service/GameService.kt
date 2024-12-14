@@ -6,6 +6,7 @@ import com.tendaysonly.ringly.cqrs.CommandHandler
 import com.tendaysonly.ringly.cqrs.QueryHandler
 import com.tendaysonly.ringly.entity.Game
 import com.tendaysonly.ringly.entity.GameResult
+import com.tendaysonly.ringly.entity.Participant
 import com.tendaysonly.ringly.exception.ActiveGameNotFoundException
 import com.tendaysonly.ringly.exception.GatheringNotFoundException
 import com.tendaysonly.ringly.exception.NoPermissionException
@@ -62,7 +63,11 @@ class GameService(
         ).apply {
 
             val participants = participantRepository
-                .findByGathering(gathering = gathering, Pageable.unpaged())
+                .findByGatheringAndStatus(
+                    gathering = gathering,
+                    Participant.ParticipantStatus.ATTENDING,
+                    Pageable.unpaged()
+                )
 
             this.results = when (command.type) {
                 Game.GameType.RANDOM_PICK -> {
@@ -98,7 +103,7 @@ class GameService(
 
                         do {
                             receivers.shuffle()
-                        } while (receivers.indices.any { i -> givers[i] == receivers[i] })
+                        } while (receivers.indices.any { i -> givers[i].email == receivers[i].email })
 
                         givers
                             .zip(receivers)
@@ -106,8 +111,8 @@ class GameService(
                                 GameResult(
                                     resultId = NanoId.generate(),
                                     game = this,
-                                    giver = pair.first.email,
-                                    receiver = pair.second.email,
+                                    giver = pair.first.name,
+                                    receiver = pair.second.name,
                                     createdAt = ZonedDateTime.now()
                                 )
                             }
