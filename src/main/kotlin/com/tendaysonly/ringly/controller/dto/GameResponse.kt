@@ -16,6 +16,9 @@ data class GameResponse(
     @Schema(description = "모임 고유 번호")
     val gatheringId: String,
 
+    @Schema(description = "게임 유형")
+    val type: Game.GameType,
+
     @Schema(description = "활성화 여부")
     val isActive: Boolean,
 
@@ -59,6 +62,7 @@ data class GameResponse(
                 gatheringId = game.gathering.gatheringId,
                 isActive = game.isActive,
                 results = game.results.map { result -> GameResultResponse.from(result) },
+                type = game.type,
             )
         }
     }
