@@ -3,10 +3,7 @@ package com.tendaysonly.ringly.service
 import com.tendaysonly.ringly.cqrs.CommandHandler
 import com.tendaysonly.ringly.entity.Gathering
 import com.tendaysonly.ringly.entity.Participant
-import com.tendaysonly.ringly.exception.AlreadyParticipatingException
-import com.tendaysonly.ringly.exception.GatheringNotFoundException
-import com.tendaysonly.ringly.exception.NoPermissionException
-import com.tendaysonly.ringly.exception.ParticipantNotFoundException
+import com.tendaysonly.ringly.exception.*
 import com.tendaysonly.ringly.repository.GatheringRepository
 import com.tendaysonly.ringly.repository.ParticipantRepository
 import com.tendaysonly.ringly.service.usecase.JoinGatheringUseCase
@@ -85,8 +82,8 @@ class ParticipantService(
         ) ?: throw ParticipantNotFoundException()
 
         if (participant.gathering.gatheringId != command.gatheringId) throw ParticipantNotFoundException()
-
         if (participant.email != command.triggeredBy.email) throw NoPermissionException()
+        if (participant.isHost and (command.status == Participant.ParticipantStatus.NOT_ATTENDING)) throw InvalidHostStatusChangeException()
 
         return participantRepository
             .save(participant

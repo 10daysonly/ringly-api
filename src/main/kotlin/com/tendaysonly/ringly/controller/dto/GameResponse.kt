@@ -28,13 +28,13 @@ data class GameResponse(
 
     data class GameResultResponse(
 
-        @Schema(description = "선택된 참가자 이메일(제비 뽑기)")
+        @Schema(description = "선택된 참가자 이름(제비 뽑기)")
         var picked: String? = null,
 
-        @Schema(description = "받는 참가자 이메일(마니또)")
+        @Schema(description = "받는 참가자 이름(마니또)")
         var receiver: String? = null,
 
-        @Schema(description = "주는 참가자 이메일(마니또)")
+        @Schema(description = "주는 참가자 이름(마니또)")
         var giver: String? = null,
 
         var createdAt: ZonedDateTime,

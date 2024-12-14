@@ -16,4 +16,10 @@ interface ParticipantRepository : JpaRepository<Participant, String> {
     fun findByGatheringAndEmail(gathering: Gathering, email: String): Participant?
 
     fun findByGathering(gathering: Gathering, pageable: Pageable): Page<Participant>
+
+    fun findByGatheringAndStatus(
+        gathering: Gathering,
+        status: Participant.ParticipantStatus,
+        pageable: Pageable
+    ): Page<Participant>
 }
