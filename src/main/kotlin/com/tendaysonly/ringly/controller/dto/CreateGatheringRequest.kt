@@ -9,10 +9,10 @@ import java.time.ZonedDateTime
 data class CreateGatheringRequest(
 
     @Schema(description = "주최자 이메일", example = "host@10daysonly.com")
-    val hostEmail: String,
+    val hostEmail: String? = null,
 
     @Schema(description = "주최자명", example = "강주최")
-    val hostName: String,
+    val hostName: String? = null,
 
     @Schema(description = "모임명", example = "송년회")
     val name: String,

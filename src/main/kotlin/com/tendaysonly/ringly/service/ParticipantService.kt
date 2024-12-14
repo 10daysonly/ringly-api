@@ -5,9 +5,12 @@ import com.tendaysonly.ringly.entity.Gathering
 import com.tendaysonly.ringly.entity.Participant
 import com.tendaysonly.ringly.exception.AlreadyParticipatingException
 import com.tendaysonly.ringly.exception.GatheringNotFoundException
+import com.tendaysonly.ringly.exception.NoPermissionException
+import com.tendaysonly.ringly.exception.ParticipantNotFoundException
 import com.tendaysonly.ringly.repository.GatheringRepository
 import com.tendaysonly.ringly.repository.ParticipantRepository
 import com.tendaysonly.ringly.service.usecase.JoinGatheringUseCase
+import com.tendaysonly.ringly.service.usecase.UpdateParticipantUseCase
 import io.viascom.nanoid.NanoId
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -19,7 +22,7 @@ class ParticipantService(
     private val mailService: MailService,
     private val participantRepository: ParticipantRepository,
     private val gatheringRepository: GatheringRepository
-) : JoinGatheringUseCase {
+) : JoinGatheringUseCase, UpdateParticipantUseCase {
 
     /**
      * Joins the gathering.
@@ -68,5 +71,24 @@ class ParticipantService(
                 ), gathering
             )
         }
+    }
+
+    @Transactional
+    @CommandHandler
+    override fun updateParticipant(command: UpdateParticipantUseCase.UpdateParticipantCommand): Participant {
+
+        val participant = participantRepository.findByIdOrNull(command.participantId)
+            ?: throw ParticipantNotFoundException()
+
+        if (participant.gathering.gatheringId != command.gatheringId) throw ParticipantNotFoundException()
+
+        if (participant.email != command.triggeredBy.email) throw NoPermissionException()
+
+        return participantRepository
+            .save(participant
+                .apply {
+                    command.imageUrl?.let { this.imageUrl = it }
+                    command.status?.let { this.status = it }
+                })
     }
 }

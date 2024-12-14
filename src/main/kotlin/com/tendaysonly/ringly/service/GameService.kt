@@ -72,7 +72,7 @@ class GameService(
                             resultId = NanoId.generate(),
                             game = this,
                             picked = participants
-                                .content[Random.nextInt(participants.size - 1)]
+                                .content[if (participants.size > 1) Random.nextInt(participants.size) else 0]
                                 .email,
                             createdAt = ZonedDateTime.now()
                         )
@@ -80,23 +80,39 @@ class GameService(
                 }
 
                 Game.GameType.SECRET_SANTA -> {
+                    if (participants.size < 2) {
 
-                    val givers = participants.toMutableList()
-                    val receivers = givers.toMutableList()
-
-                    do {
-                        receivers.shuffle()
-                    } while (receivers.indices.any { i -> givers[i] == receivers[i] })
-
-                    givers.zip(receivers).map { pair ->
-                        GameResult(
-                            resultId = NanoId.generate(),
-                            game = this,
-                            giver = pair.first.email,
-                            receiver = pair.second.email,
-                            createdAt = ZonedDateTime.now()
+                        mutableListOf(
+                            GameResult(
+                                resultId = NanoId.generate(),
+                                game = this,
+                                giver = participants.content.first().email,
+                                receiver = participants.content.first().email,
+                                createdAt = ZonedDateTime.now()
+                            )
                         )
-                    }.toMutableList()
+                    } else {
+
+                        val givers = participants.toMutableList()
+                        val receivers = givers.toMutableList()
+
+                        do {
+                            receivers.shuffle()
+                        } while (receivers.indices.any { i -> givers[i] == receivers[i] })
+
+                        givers
+                            .zip(receivers)
+                            .map { pair ->
+                                GameResult(
+                                    resultId = NanoId.generate(),
+                                    game = this,
+                                    giver = pair.first.email,
+                                    receiver = pair.second.email,
+                                    createdAt = ZonedDateTime.now()
+                                )
+                            }
+                            .toMutableList()
+                    }
                 }
             }
         }

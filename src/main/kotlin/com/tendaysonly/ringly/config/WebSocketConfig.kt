@@ -160,6 +160,9 @@ class WebSocketConfig(
             @JsonProperty("message")
             MESSAGE,
 
+            @JsonProperty("message_deleted")
+            MESSAGE_DELETED,
+
             @JsonProperty("notification")
             NOTIFICATION,
 

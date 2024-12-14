@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @Controller
 @RequestMapping("/api/v1/gatherings")
@@ -90,8 +91,16 @@ class GatheringController(
                             dressCode = request.dressCode,
                             additionalInfo = request.additionalInfo,
                             intro = request.intro,
-                            hostEmail = currentUser?.email ?: request.hostEmail,
-                            hostName = currentUser?.name ?: request.hostName,
+                            hostEmail = currentUser?.email ?: request.hostEmail
+                            ?: throw ResponseStatusException(
+                                HttpStatus.UNPROCESSABLE_ENTITY,
+                                "`hostEmail` must be specified"
+                            ),
+                            hostName = currentUser?.name ?: request.hostName
+                            ?: throw ResponseStatusException(
+                                HttpStatus.UNPROCESSABLE_ENTITY,
+                                "`hostName` must be specified"
+                            ),
                         )
                     )
                 )
