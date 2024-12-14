@@ -1,7 +1,5 @@
 package com.tendaysonly.ringly.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.tendaysonly.ringly.config.WebSocketConfig
 import com.tendaysonly.ringly.cqrs.CommandHandler
 import com.tendaysonly.ringly.cqrs.QueryHandler
 import com.tendaysonly.ringly.entity.Game
@@ -27,8 +25,6 @@ import kotlin.random.Random
 class GameService(
     private val gameRepository: GameRepository,
     private val gatheringRepository: GatheringRepository,
-    private val participantRegistry: WebSocketConfig.ParticipantWebSocketSessionRegistry,
-    private val mapper: ObjectMapper,
     private val participantRepository: ParticipantRepository
 ) : StartGameUseCase, GetActiveGameUseCase {
 
@@ -78,7 +74,7 @@ class GameService(
                             game = this,
                             picked = participants
                                 .content[if (participants.size > 1) Random.nextInt(participants.size) else 0]
-                                .email,
+                                .name,
                             createdAt = ZonedDateTime.now()
                         )
                     )
@@ -91,8 +87,8 @@ class GameService(
                             GameResult(
                                 resultId = NanoId.generate(),
                                 game = this,
-                                giver = participants.content.first().email,
-                                receiver = participants.content.first().email,
+                                giver = participants.content.first().name,
+                                receiver = participants.content.first().name,
                                 createdAt = ZonedDateTime.now()
                             )
                         )

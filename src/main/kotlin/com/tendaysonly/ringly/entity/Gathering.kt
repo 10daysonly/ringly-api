@@ -45,6 +45,15 @@ class Gathering(
     @OrderBy("isHost DESC, joinedAt ASC")
     var participants: MutableList<Participant> = mutableListOf(),
 
+    @JsonManagedReference
+    @OneToMany(
+        mappedBy = "gathering",
+        orphanRemoval = true,
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY
+    )
+    var games: MutableList<Game> = mutableListOf(),
+
     var createdAt: ZonedDateTime = ZonedDateTime.now(),
 ) {
 

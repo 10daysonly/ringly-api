@@ -16,6 +16,7 @@ class Game(
     val gameId: String,
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "gathering_id")
     var gathering: Gathering,
 
