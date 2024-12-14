@@ -7,6 +7,7 @@ import com.tendaysonly.ringly.controller.dto.UpdateGatheringRequest
 import com.tendaysonly.ringly.controller.specification.GatheringApiSpecification
 import com.tendaysonly.ringly.cqrs.CommandBus
 import com.tendaysonly.ringly.cqrs.QueryBus
+import com.tendaysonly.ringly.security.Authenticated
 import com.tendaysonly.ringly.service.User
 import com.tendaysonly.ringly.service.usecase.CreateGatheringUseCase
 import com.tendaysonly.ringly.service.usecase.DeleteGatheringUseCase
@@ -133,8 +134,12 @@ class GatheringController(
             )
     }
 
+    @Authenticated
     @DeleteMapping("/{gatheringId}")
-    override fun deleteGathering(@PathVariable gatheringId: String): ResponseEntity<GatheringResponse> {
+    override fun deleteGathering(
+        @AuthenticationPrincipal currentUser: User,
+        @PathVariable gatheringId: String
+    ): ResponseEntity<GatheringResponse> {
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -143,7 +148,7 @@ class GatheringController(
                     this.commandBus.execute(
                         DeleteGatheringUseCase.DeleteGatheringCommand(
                             gatheringId = gatheringId,
-                            email = gatheringId
+                            email = currentUser.email
                         )
                     )
                 )

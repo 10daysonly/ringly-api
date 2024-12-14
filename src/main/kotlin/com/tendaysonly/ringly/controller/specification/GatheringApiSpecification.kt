@@ -135,6 +135,8 @@ interface GatheringApiSpecification {
         )
     )
     fun deleteGathering(
+        @Parameter(hidden = true)
+        currentUser: User,
         @Parameter(description = "삭제할 모임 고유 번호", required = true, example = "V1StGXR8_Z5jdHi6B-myT")
         gatheringId: String
     ): ResponseEntity<GatheringResponse>
