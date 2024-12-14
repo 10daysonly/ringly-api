@@ -50,9 +50,9 @@ jobs:
             docker pull ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
             docker ps -a | grep ringly-api && docker stop ringly-api || true
             docker ps -a | grep ringly-api && docker rm ringly-api || true
-            
-            DOCKER_RUN_CMD="docker run -d --name ringly-api -p 10000:10000 -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest"
-            
-            echo "Docker Run Command: ${DOCKER_RUN_CMD}"
-            
-            docker run -d --name ringly-api -p 10000:10000 -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
+            docker run -d --name ringly-api \
+              -p 10000:10000 \
+              -e TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }} \
+              -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+              -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+              ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
