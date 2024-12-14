@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Component
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -33,17 +35,26 @@ class MailService(
     fun sendInvitation(recipient: Recipient, gathering: Gathering) =
         send(
             recipient = recipient,
-            title = "모임에 참가하세요!",
+            title = "지금 Ringly로 모임에 참가하세요!",
             content = templateEngine.process(
                 "invitation", Context()
                     .variable("name", gathering.name)
                     .variable("dressCode", gathering.dressCode)
                     .variable("location", gathering.location)
-                    .variable("meetAt", gathering.meetAt)
+                    .variable(
+                        "meetAt", if (gathering.meetAt != null) {
+
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+                            formatter.format(gathering.meetAt!!.withZoneSameInstant(ZoneId.of("Asia/Seoul")))
+                        } else {
+                            null
+                        }
+                    )
                     .variable("additionalInfo", gathering.additionalInfo)
                     .variable(
                         "link",
-                        "https://ringly.oognuyh.com/gahtering/${gathering.gatheringId}?token=${
+                        "https://ringly.oognuyh.com/invite-room/${gathering.gatheringId}/preview?token=${
                             tokenUtils.generate(
                                 recipient.email,
                                 mapOf(
