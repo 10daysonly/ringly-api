@@ -82,7 +82,7 @@ interface GatheringApiSpecification {
             responseCode = "201",
         ),
         ApiResponse(
-            responseCode = "422",
+            responseCode = "404",
         ),
         ApiResponse(
             responseCode = "500",
