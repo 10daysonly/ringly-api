@@ -22,7 +22,10 @@ data class ParticipantResponse(
     val imageUrl: String? = null,
 
     @Schema(description = "참가일시")
-    val joinedAt: ZonedDateTime
+    val joinedAt: ZonedDateTime,
+
+    @Schema(description = "참석 여부")
+    val status: Participant.ParticipantStatus,
 ) {
 
     companion object {
@@ -34,7 +37,8 @@ data class ParticipantResponse(
                 name = participant.name,
                 email = participant.email,
                 imageUrl = participant.imageUrl,
-                joinedAt = participant.joinedAt
+                joinedAt = participant.joinedAt,
+                status = participant.status,
             )
         }
     }
