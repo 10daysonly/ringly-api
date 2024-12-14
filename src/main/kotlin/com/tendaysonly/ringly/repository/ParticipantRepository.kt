@@ -13,9 +13,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ParticipantRepository : JpaRepository<Participant, String> {
 
-    fun findByEmail(email: String): Participant?
+    fun findByGatheringAndEmail(gathering: Gathering, email: String): Participant?
 
     fun findByGathering(gathering: Gathering, pageable: Pageable): Page<Participant>
-
-    fun existsByGatheringAndEmail(gathering: Gathering, email: String): Boolean
 }

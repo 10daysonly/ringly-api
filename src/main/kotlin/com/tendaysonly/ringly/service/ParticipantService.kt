@@ -36,7 +36,7 @@ class ParticipantService(
                 ?: throw GatheringNotFoundException()
 
         this.participantRepository
-            .findByEmail(command.email)
+            .findByGatheringAndEmail(gathering, command.email)
             ?.let { participant ->
 
                 mailService.sendInvitation(
@@ -77,8 +77,12 @@ class ParticipantService(
     @CommandHandler
     override fun updateParticipant(command: UpdateParticipantUseCase.UpdateParticipantCommand): Participant {
 
-        val participant = participantRepository.findByIdOrNull(command.participantId)
-            ?: throw ParticipantNotFoundException()
+        val gathering = gatheringRepository.findByIdOrNull(command.gatheringId)
+            ?: throw GatheringNotFoundException()
+        val participant = participantRepository.findByGatheringAndEmail(
+            gathering = gathering,
+            email = command.triggeredBy.email
+        ) ?: throw ParticipantNotFoundException()
 
         if (participant.gathering.gatheringId != command.gatheringId) throw ParticipantNotFoundException()
 

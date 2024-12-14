@@ -93,8 +93,6 @@ interface ParticipantApiSpecification {
         currentUser: User,
         @Parameter(description = "모임 고유 번호", required = true, example = "V1StGXR8_Z5jdHi6B-myT")
         gatheringId: String,
-        @Parameter(description = "참가자 고유 번호", required = true, example = "V1StGXR8_Z5jdHi6B-myT")
-        participantId: String,
         request: UpdateParticipantRequest
     ): ResponseEntity<ParticipantResponse>
 }

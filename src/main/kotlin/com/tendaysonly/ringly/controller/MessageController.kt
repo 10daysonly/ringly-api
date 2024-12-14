@@ -38,7 +38,11 @@ class MessageController(
     @Authenticated
     override fun findMessages(
         @PathVariable gatheringId: String,
-        @PageableDefault(sort = ["createdAt"], direction = Sort.Direction.DESC) pageable: Pageable
+        @PageableDefault(
+            page = 1,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable
     ): ResponseEntity<Page<MessageResponse>> {
 
         return ResponseEntity
