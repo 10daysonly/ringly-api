@@ -52,8 +52,13 @@ data class GatheringPreviewResponse(
                 gatheringId = gathering.gatheringId,
                 name = gathering.name,
                 imageUrl = gathering.imageUrl,
-                host = ParticipantResponse.from(gathering.participants.find { participant -> participant.email == gathering.host }
-                    ?: throw ParticipantNotFoundException()),
+                host = ParticipantResponse
+                    .from(
+                        gathering
+                            .participants
+                            .find { participant -> participant.email == gathering.host }
+                            ?: throw ParticipantNotFoundException()),
+                meetAt = gathering.meetAt,
                 createdAt = gathering.createdAt
             )
         }
