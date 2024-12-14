@@ -4,8 +4,10 @@ import com.tendaysonly.ringly.cqrs.CommandHandler
 import com.tendaysonly.ringly.cqrs.QueryHandler
 import com.tendaysonly.ringly.entity.Message
 import com.tendaysonly.ringly.exception.GatheringNotFoundException
+import com.tendaysonly.ringly.exception.MessageNotFoundException
 import com.tendaysonly.ringly.repository.GatheringRepository
 import com.tendaysonly.ringly.repository.MessageRepository
+import com.tendaysonly.ringly.service.usecase.DeleteMessageUseCase
 import com.tendaysonly.ringly.service.usecase.FindMessagesUseCase
 import com.tendaysonly.ringly.service.usecase.PostMessageUseCase
 import io.viascom.nanoid.NanoId
@@ -19,7 +21,7 @@ import java.time.ZonedDateTime
 class MessageService(
     private val messageRepository: MessageRepository,
     private val gatheringRepository: GatheringRepository
-) : PostMessageUseCase, FindMessagesUseCase {
+) : PostMessageUseCase, FindMessagesUseCase, DeleteMessageUseCase {
 
     @Transactional
     @CommandHandler
@@ -48,5 +50,22 @@ class MessageService(
             ?: throw GatheringNotFoundException()
 
         return messageRepository.findByGathering(gathering = gathering, pageable = query.pageable)
+    }
+
+    @Transactional
+    @CommandHandler
+    override fun deleteMessage(command: DeleteMessageUseCase.DeleteMessageCommand): Message {
+
+        val message =
+            messageRepository.findByIdOrNull(command.messageId) ?: throw MessageNotFoundException()
+
+        if (message.sender != command.triggeredBy.email) {
+
+            throw GatheringNotFoundException()
+        }
+
+        messageRepository.delete(message)
+
+        return message
     }
 }
