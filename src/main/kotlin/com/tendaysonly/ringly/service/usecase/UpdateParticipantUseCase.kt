@@ -19,9 +19,6 @@ interface UpdateParticipantUseCase {
         val gatheringId: String,
 
         @field:NotNull
-        val participantId: String,
-
-        @field:NotNull
         val triggeredBy: User,
 
         var imageUrl: String?,

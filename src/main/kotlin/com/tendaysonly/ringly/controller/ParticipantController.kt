@@ -69,11 +69,10 @@ class ParticipantController(
     }
 
     @Authenticated
-    @PatchMapping("/{participantId}")
+    @PatchMapping("/me")
     override fun updateParticipant(
         @AuthenticationPrincipal currentUser: User,
         @PathVariable gatheringId: String,
-        @PathVariable participantId: String,
         @RequestBody request: UpdateParticipantRequest
     ): ResponseEntity<ParticipantResponse> {
 
@@ -84,7 +83,6 @@ class ParticipantController(
                     this.commandBus.execute(
                         UpdateParticipantUseCase.UpdateParticipantCommand(
                             gatheringId = gatheringId,
-                            participantId = participantId,
                             imageUrl = request.imageUrl,
                             status = request.status,
                             triggeredBy = currentUser
