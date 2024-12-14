@@ -54,7 +54,7 @@ class MailService(
                     .variable("additionalInfo", gathering.additionalInfo)
                     .variable(
                         "link",
-                        "https://ringly.oognuyh.com/invite-room/${gathering.gatheringId}/participants?token=${
+                        "https://ringly.oognuyh.com/gatherings/${gathering.gatheringId}/participants?token=${
                             tokenUtils.generate(
                                 recipient.email,
                                 mapOf(
